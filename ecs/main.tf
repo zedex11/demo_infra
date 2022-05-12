@@ -1,6 +1,5 @@
 provider "aws" {
-  region  = var.region
-  # profile = var.profile
+  region = var.region
 }
 
 terraform {
@@ -11,7 +10,7 @@ locals {
   common_tags = {
     env        = var.env_name
     app        = var.app
-    due_date   = var.due_date
+    builduser  = var.build_user
     created_by = "terraform"
   }
 }
