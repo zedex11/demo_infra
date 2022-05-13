@@ -1,5 +1,5 @@
 resource "aws_iam_role" "test-execution" {
-  name = "${var.env_name}-test-execution"
+  name = "${var.env_name}-${var.app_name}"
 
   assume_role_policy = <<EOF
 {
@@ -27,7 +27,7 @@ resource "aws_iam_role_policy_attachment" "test-execution" {
 }
 
 resource "aws_cloudwatch_log_group" "test" {
-  name              = "/ecs/${var.app_name}"
+  name              = "/ecs/${var.env_name}-${var.app_name}"
   retention_in_days = var.cloudwatch_log_retention
 
   tags = local.common_tags
@@ -35,7 +35,7 @@ resource "aws_cloudwatch_log_group" "test" {
 
 
 resource "aws_ecs_task_definition" "test" {
-  family                   = "${var.app_name}"
+  family                   = "${var.env_name}-${var.app_name}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = var.cpu
@@ -47,7 +47,7 @@ resource "aws_ecs_task_definition" "test" {
 }
 
 resource "aws_ecs_service" "test" {
-  name                               = var.app_name
+  name                               = "${var.env_name}-${var.app_name}"
   cluster                            = aws_ecs_cluster.test.arn 
   task_definition                    = aws_ecs_task_definition.test.arn
   desired_count                      = var.service_desired_count
@@ -64,7 +64,7 @@ resource "aws_ecs_service" "test" {
 
   load_balancer {
     target_group_arn = aws_alb_target_group.test.arn
-    container_name   = "${var.env_name}-test"
+    container_name   = "${var.env_name}-${var.app_name}"
     container_port   = "80"
   }
 
@@ -90,9 +90,6 @@ resource "aws_security_group" "service_ecs" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
-  tags = {
-    Name       = "${var.env_name}-test-alb"
-    created_by = "terraform"
-    app        = var.app
-  }
+  tags = local.common_tags
 }
+

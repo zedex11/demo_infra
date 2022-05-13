@@ -1,6 +1,6 @@
 [
     {        
-        "name":"dev-test",
+        "name":"${name}",
         "image":"${image}",
         "logConfiguration":{
             "logDriver":"awslogs",

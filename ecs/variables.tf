@@ -15,7 +15,7 @@ variable "build_user" {
   default = "xxxxxx"
 }
 variable "app" {
-  default = "dev-zedex"
+  default = "php"
 }
 
 
@@ -34,7 +34,7 @@ variable "image_version" {
 }
 
 variable "app_name" {
-  default = "dev-zedex"
+  default = "php"
 }
 
 

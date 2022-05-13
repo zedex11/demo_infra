@@ -1,5 +1,5 @@
 resource "aws_security_group" "test-alb" {
-  name   = "${var.env_name}-test-alb"
+  name   = "${var.env_name}-${var.app_name}"
   vpc_id = data.aws_vpc.dev-vpc.id
 
   ingress {
@@ -18,15 +18,12 @@ resource "aws_security_group" "test-alb" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
-  tags = {
-    Name       = "${var.env_name}-test-alb"
-    created_by = "terraform"
-    app        = var.app
-  }
+  tags = local.common_tags
 }
 
+
 resource "aws_alb" "test-alb" {
-  name                       = "${var.env_name}-test-alb"
+  name                       = "${var.env_name}-${var.app_name}"
   internal                   = false
   load_balancer_type         = "application"
   enable_deletion_protection = false
@@ -34,19 +31,16 @@ resource "aws_alb" "test-alb" {
   security_groups            = [aws_security_group.test-alb.id]
   subnets                    = data.aws_subnet_ids.test-public.ids
 
-  tags = {
-    Name       = "${var.env_name}-test-alb"
-    created_by = "terraform"
-    app        = var.app
-  }
+  tags = local.common_tags
 }
+
 
 output "lb_dns_name" {
   value = aws_alb.test-alb.dns_name
 }
 
 resource "aws_alb_target_group" "test" {
-  name                          = "${var.env_name}-test"
+  name                          = "${var.env_name}-${var.app_name}"
   port                          = 80
   protocol                      = "HTTP"
   vpc_id                        = data.aws_vpc.dev-vpc.id
@@ -64,12 +58,9 @@ resource "aws_alb_target_group" "test" {
   #   unhealthy_threshold = "2"
   # }
 
-  tags = {
-    Name       = "${var.env_name}-test"
-    created_by = "terraform"
-    app        = var.app
-  }
+  tags = local.common_tags
 }
+
 
 # Redirect to https listener
 resource "aws_alb_listener" "test-http" {
