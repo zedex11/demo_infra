@@ -5,7 +5,7 @@ data "template_file" "test" {
     region         = var.region
     log_group      = aws_cloudwatch_log_group.test.name
     name           = "${var.env_name}-${var.app_name}"
-    image          = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com/${var.app_name}:${var.image_version}"
+    image          = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com/${var.env_name}-${var.app_name}:${var.image_version}"
     container_port = "80"
   }
 }
